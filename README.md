@@ -2,6 +2,26 @@
 
 [Русская версия](README.ru.md)
 
+## Краткое описание на русском
+
+Backend-приложение на FastAPI для технического задания: собственная система
+аутентификации и авторизации с JWT-токенами, ролями и правилами доступа,
+хранящимися в базе данных.
+
+Основные возможности:
+
+- Регистрация, login, logout, обновление профиля и мягкое удаление аккаунта
+- JWT-аутентификация через `Authorization: Bearer <token>`
+- Роли `admin`, `manager`, `user`, `guest`
+- Таблицы `business_elements` и `access_rules` для собственной модели доступа
+- Ответы `401 Unauthorized` и `403 Forbidden`
+- Admin API для управления ролями, бизнес-элементами и правилами доступа
+- Mock-ресурсы `products`, `orders`, `stores` с `owner_id`
+
+Полная русская версия: [README.ru.md](README.ru.md)
+
+## English README
+
 Production-like FastAPI backend for a technical assignment. It implements JWT authentication and a custom database-backed authorization model instead of relying on framework permissions.
 
 ## Stack
@@ -204,6 +224,17 @@ List users as admin:
 curl http://localhost:8000/admin/users \
   -H "Authorization: Bearer $TOKEN"
 ```
+
+## Production Notes / Future Improvements
+
+The current implementation intentionally stays focused on the assignment scope. For a larger production system, the next improvements would be:
+
+- Refresh token rotation for longer-lived sessions without changing access token semantics.
+- Rate limiting for login and other sensitive endpoints.
+- Audit logging for authentication events and admin changes to access rules.
+- Cleanup of expired blacklisted tokens with a scheduled job or maintenance command.
+- Pagination metadata, such as total count and next/previous offsets, while preserving list endpoints where needed.
+- Structured logging for request tracing, security events, and operational debugging.
 
 ## Assignment Checklist
 

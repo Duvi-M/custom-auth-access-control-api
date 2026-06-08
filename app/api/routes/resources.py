@@ -1,6 +1,6 @@
 from typing import Any, TypeVar
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -40,6 +40,8 @@ def build_resource_router(
 
     @router.get("", response_model=list[read_schema])  # type: ignore[valid-type]
     def list_items(
+        limit: int = Query(default=50, ge=1, le=100),
+        offset: int = Query(default=0, ge=0),
         user: User = Depends(get_current_user),
         db: Session = Depends(get_db),
     ) -> list[ResourceT]:
@@ -47,6 +49,7 @@ def build_resource_router(
         stmt = select(model).order_by(model.id)
         if scope == "owned":
             stmt = stmt.where(model.owner_id == user.id)
+        stmt = stmt.limit(limit).offset(offset)
         return list(db.scalars(stmt).all())
 
     @router.get("/{item_id}", response_model=read_schema)  # type: ignore[valid-type]

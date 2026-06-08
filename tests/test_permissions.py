@@ -77,6 +77,33 @@ def test_auth_me_includes_role_name(client: TestClient) -> None:
     assert response.json()["role_name"] == "user"
 
 
+def test_admin_users_list_supports_limit_and_offset(client: TestClient) -> None:
+    token = login(client, "admin@example.com", "Admin123!")
+
+    response = client.get(
+        "/admin/users?limit=2&offset=1",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 200
+    assert isinstance(response.json(), list)
+    assert [user["email"] for user in response.json()] == [
+        "manager@example.com",
+        "user@example.com",
+    ]
+
+
+def test_resource_list_supports_limit_and_offset(client: TestClient) -> None:
+    token = login(client, "manager@example.com", "Manager123!")
+
+    response = client.get(
+        "/products?limit=1&offset=1",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 200
+    assert isinstance(response.json(), list)
+    assert [product["name"] for product in response.json()] == ["User product"]
+
+
 def test_regular_user_cannot_list_admin_users(client: TestClient) -> None:
     token = login(client, "user@example.com", "User123!")
 

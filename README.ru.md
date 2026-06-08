@@ -148,3 +148,15 @@ Swagger UI доступен по адресу `http://localhost:8000/docs`.
 ```bash
 DATABASE_URL=sqlite:///./test.db pytest
 ```
+
+## Производственные заметки / будущие улучшения
+
+Текущая реализация намеренно сфокусирована на требованиях технического задания.
+Для более крупной production-системы следующими улучшениями могли бы быть:
+
+- Ротация refresh-токенов для долгих сессий без изменения семантики access token.
+- Rate limiting для login и других чувствительных эндпоинтов.
+- Audit logging для событий аутентификации и изменений правил доступа администратором.
+- Очистка истёкших токенов из `token_blacklist` через scheduled job или maintenance command.
+- Метаданные пагинации, например total count и next/previous offset.
+- Structured logging для трассировки запросов, security events и operational debugging.

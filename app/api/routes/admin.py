@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -42,8 +42,12 @@ def _commit_or_conflict(db: Session) -> None:
 
 
 @router.get("/users", response_model=list[UserRead])
-def list_users(db: Session = Depends(get_db)) -> list[User]:
-    return list(db.scalars(select(User).order_by(User.id)).all())
+def list_users(
+    limit: int = Query(default=50, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+    db: Session = Depends(get_db),
+) -> list[User]:
+    return list(db.scalars(select(User).order_by(User.id).limit(limit).offset(offset)).all())
 
 
 @router.post("/roles", response_model=RoleRead, status_code=status.HTTP_201_CREATED)
@@ -56,8 +60,12 @@ def create_role(payload: RoleCreate, db: Session = Depends(get_db)) -> Role:
 
 
 @router.get("/roles", response_model=list[RoleRead])
-def list_roles(db: Session = Depends(get_db)) -> list[Role]:
-    return list(db.scalars(select(Role).order_by(Role.id)).all())
+def list_roles(
+    limit: int = Query(default=50, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+    db: Session = Depends(get_db),
+) -> list[Role]:
+    return list(db.scalars(select(Role).order_by(Role.id).limit(limit).offset(offset)).all())
 
 
 @router.get("/roles/{role_id}", response_model=RoleRead)
@@ -100,8 +108,14 @@ def create_business_element(
 
 
 @router.get("/business-elements", response_model=list[BusinessElementRead])
-def list_business_elements(db: Session = Depends(get_db)) -> list[BusinessElement]:
-    return list(db.scalars(select(BusinessElement).order_by(BusinessElement.id)).all())
+def list_business_elements(
+    limit: int = Query(default=50, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+    db: Session = Depends(get_db),
+) -> list[BusinessElement]:
+    return list(
+        db.scalars(select(BusinessElement).order_by(BusinessElement.id).limit(limit).offset(offset)).all()
+    )
 
 
 @router.get("/business-elements/{element_id}", response_model=BusinessElementRead)
@@ -142,8 +156,14 @@ def create_access_rule(payload: AccessRuleCreate, db: Session = Depends(get_db))
 
 
 @router.get("/access-rules", response_model=list[AccessRuleRead])
-def list_access_rules(db: Session = Depends(get_db)) -> list[AccessRule]:
-    return list(db.scalars(select(AccessRule).order_by(AccessRule.id)).all())
+def list_access_rules(
+    limit: int = Query(default=50, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+    db: Session = Depends(get_db),
+) -> list[AccessRule]:
+    return list(
+        db.scalars(select(AccessRule).order_by(AccessRule.id).limit(limit).offset(offset)).all()
+    )
 
 
 @router.get("/access-rules/{rule_id}", response_model=AccessRuleRead)
