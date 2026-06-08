@@ -8,7 +8,7 @@ seed:
 	docker compose run --rm api python -m app.scripts.seed
 
 test:
-	pytest
+	DATABASE_URL=sqlite:///./test.db pytest
 
 docker-test:
 	docker compose run --rm api pytest

@@ -130,6 +130,7 @@ cp .env.example .env
 make up
 make migrate
 make seed
+make test
 ```
 
 PostgreSQL доступен только внутри Docker Compose сети по адресу `db:5432` и
@@ -146,6 +147,7 @@ Swagger UI доступен по адресу `http://localhost:8000/docs`.
 ## Проверка тестов
 
 ```bash
+make test
 DATABASE_URL=sqlite:///./test.db pytest
 ```
 
