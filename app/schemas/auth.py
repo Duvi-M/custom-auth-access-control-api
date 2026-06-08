@@ -56,6 +56,7 @@ class UserRead(ORMModel):
     email: str
     is_active: bool
     role_id: int
+    role_name: str | None
 
 
 class ProfileUpdate(BaseModel):

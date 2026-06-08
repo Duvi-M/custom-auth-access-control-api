@@ -1,5 +1,7 @@
 # Custom Auth Access Control API
 
+[Русская версия](README.ru.md)
+
 Production-like FastAPI backend for a technical assignment. It implements JWT authentication and a custom database-backed authorization model instead of relying on framework permissions.
 
 ## Stack
@@ -24,6 +26,16 @@ This API authenticates users with email and password, returns a signed JWT acces
 Authorization answers: "What is this authenticated user allowed to do?"
 
 This API stores roles, business elements, and access rules in the database. The permission service checks the user's role against the target business element and requested action.
+
+## Architecture Diagram / Диаграмма архитектуры
+
+The diagram below shows how authentication, JWT validation, custom permission checks, admin endpoints, and protected business resources interact.
+
+Диаграмма ниже показывает, как взаимодействуют аутентификация, проверка JWT, собственная система прав доступа, административные эндпоинты и защищённые бизнес-ресурсы.
+
+![Authentication and Authorization Flow](docs/auth_authorization_flow.png)
+
+PlantUML source: [`docs/auth_authorization_flow.puml`](docs/auth_authorization_flow.puml)
 
 ## Database Schema
 

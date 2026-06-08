@@ -42,6 +42,10 @@ class User(Base):
     role: Mapped[Role] = relationship(back_populates="users")
     blacklisted_tokens: Mapped[list["TokenBlacklist"]] = relationship(back_populates="user")
 
+    @property
+    def role_name(self) -> str | None:
+        return self.role.name if self.role is not None else None
+
 
 class BusinessElement(Base):
     __tablename__ = "business_elements"

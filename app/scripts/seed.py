@@ -208,6 +208,10 @@ def main() -> None:
         db.commit()
 
     print("Seed data created or updated.")
+    print("Seed credentials and roles:")
+    print(f"- {settings.admin_email} / {settings.admin_password} -> admin")
+    print(f"- {settings.manager_email} / {settings.manager_password} -> manager")
+    print(f"- {settings.user_email} / {settings.user_password} -> user")
 
 
 if __name__ == "__main__":

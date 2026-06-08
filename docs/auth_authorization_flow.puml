@@ -1,0 +1,47 @@
+@startuml
+title Custom Authentication & Authorization Flow
+
+actor Client
+
+rectangle "FastAPI Application" {
+  rectangle "Auth Router" as Auth
+  rectangle "JWT Validation Dependency" as JWT
+  rectangle "Permission Service" as Permission
+  rectangle "Protected Resource Routers" as Resources
+  rectangle "Admin Router" as Admin
+}
+
+database "PostgreSQL" {
+  rectangle "users"
+  rectangle "roles"
+  rectangle "business_elements"
+  rectangle "access_rules"
+  rectangle "token_blacklist"
+  rectangle "products / orders / stores"
+}
+
+Client --> Auth : Register / Login
+Auth --> users : Create or validate user
+Auth --> Client : Return JWT access token
+
+Client --> JWT : Request with Authorization: Bearer token
+JWT --> token_blacklist : Check token is not revoked
+JWT --> users : Load active user
+
+JWT --> Permission : Authenticated user + action + resource
+Permission --> roles : Read user role
+Permission --> business_elements : Find protected resource
+Permission --> access_rules : Check allowed action
+
+Permission --> Resources : Allow access
+Resources --> "products / orders / stores" : Read / create / update / delete
+
+Client --> Admin : Admin endpoints
+Admin --> JWT
+Admin --> roles : Require role.name == "admin"
+Admin --> access_rules : Manage authorization rules
+
+JWT --> Client : 401 Unauthorized\nMissing, invalid, revoked token, or inactive user
+Permission --> Client : 403 Forbidden\nAuthenticated but not allowed
+
+@enduml

@@ -141,3 +141,15 @@ def login(client: TestClient, email: str, password: str) -> str:
 
 def product_id_by_name(db: Session, name: str) -> int:
     return db.scalar(select(Product.id).where(Product.name == name))
+
+
+def role_id_by_name(db: Session, name: str) -> int:
+    return db.scalar(select(Role.id).where(Role.name == name))
+
+
+def element_id_by_name(db: Session, name: str) -> int:
+    return db.scalar(select(BusinessElement.id).where(BusinessElement.name == name))
+
+
+def first_access_rule_id(db: Session) -> int:
+    return db.scalar(select(AccessRule.id).order_by(AccessRule.id))
