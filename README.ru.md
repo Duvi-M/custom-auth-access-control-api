@@ -39,7 +39,34 @@ permission-механизмах фреймворка.
 собственная система прав доступа, административные эндпоинты и защищённые
 бизнес-ресурсы.
 
-![Authentication and Authorization Flow](docs/auth_authorization_flow.png)
+```mermaid
+flowchart TD
+    Client[Client / Swagger / curl] --> Login[POST /auth/login]
+    Login --> Users[(users)]
+    Users --> Token[JWT access token]
+
+    Client --> Request[Request with Authorization: Bearer token]
+    Request --> JWT[JWT validation dependency]
+
+    JWT --> Blacklist[(token_blacklist)]
+    JWT --> ActiveUser[(users: active user)]
+
+    JWT --> Permission[Permission Service]
+    Permission --> Roles[(roles)]
+    Permission --> Elements[(business_elements)]
+    Permission --> Rules[(access_rules)]
+
+    Permission -->|Allowed| Resource[Protected resources]
+    Resource --> Objects[(products / orders / stores)]
+
+    Permission -->|Authenticated but forbidden| Forbidden[403 Forbidden]
+    JWT -->|Missing / invalid / revoked token| Unauthorized[401 Unauthorized]
+
+    Client --> Admin[Admin endpoints]
+    Admin --> AdminCheck{role.name == admin?}
+    AdminCheck -->|Yes| AdminAccess[Manage users, roles, elements, rules]
+    AdminCheck -->|No| Forbidden
+```
 
 PlantUML source: [`docs/auth_authorization_flow.puml`](docs/auth_authorization_flow.puml)
 
