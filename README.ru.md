@@ -68,7 +68,7 @@ flowchart TD
     AdminCheck -->|No| Forbidden
 ```
 
-PlantUML source: [`docs/auth_authorization_flow.puml`](docs/auth_authorization_flow.puml)
+Исходный PlantUML-файл: [`docs/auth_authorization_flow.puml`](docs/auth_authorization_flow.puml)
 
 ## Аутентификация и авторизация
 
@@ -130,26 +130,58 @@ cp .env.example .env
 make up
 make migrate
 make seed
-make test
 ```
 
 PostgreSQL доступен только внутри Docker Compose сети по адресу `db:5432` и
 не публикуется на host-порт.
 
+API доступно по адресу `http://localhost:8000`.
+
 Swagger UI доступен по адресу `http://localhost:8000/docs`.
 
 ## Тестовые пользователи
 
-- `admin@example.com` / `Admin123!` -> `admin`
-- `manager@example.com` / `Manager123!` -> `manager`
-- `user@example.com` / `User123!` -> `user`
+- Admin: `admin@example.com` / `Admin123!`
+- Manager: `manager@example.com` / `Manager123!`
+- User: `user@example.com` / `User123!`
 
 ## Проверка тестов
 
 ```bash
 make test
+```
+
+Эквивалентная команда напрямую:
+
+```bash
 DATABASE_URL=sqlite:///./test.db pytest
 ```
+
+## Ручная проверка
+
+- Login под admin `admin@example.com` / `Admin123!` -> `200`.
+- Login под обычным user `user@example.com` / `User123!` -> `200`.
+- `GET /auth/me` с валидным bearer token -> `200`.
+- `GET /products` без token -> `401`.
+- `GET /admin/users` под обычным user -> `403`.
+- `GET /admin/users` под admin -> `200`.
+- `POST /auth/logout` -> текущий token становится недействительным.
+- `DELETE /auth/me` -> пользователь становится inactive и больше не может login.
+
+## Соответствие требованиям задания
+
+- [x] Регистрация пользователя с ФИО, email, password и repeat password
+- [x] Login с выдачей JWT access token
+- [x] Идентификация пользователя после login через `Authorization: Bearer <token>`
+- [x] Logout с blacklist JWT-токена
+- [x] Обновление профиля пользователя
+- [x] Мягкое удаление аккаунта через `is_active=False`
+- [x] Таблицы `users`, `roles`, `business_elements`, `access_rules`
+- [x] Собственная проверка прав доступа через permission service
+- [x] Разделение ошибок `401 Unauthorized` и `403 Forbidden`
+- [x] Admin API для управления ролями, бизнес-элементами и правилами доступа
+- [x] Mock-ресурсы бизнес-приложения: `products`, `orders`, `stores`
+- [x] Docker, Alembic, SQLAlchemy, PostgreSQL, pytest и README-документация
 
 ## Производственные заметки / будущие улучшения
 

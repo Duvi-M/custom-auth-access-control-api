@@ -124,31 +124,20 @@ Rules:
 
 ## Run Locally With Docker
 
-Create an environment file:
+Create an environment file, start the services, apply migrations, and seed demo data:
 
 ```bash
 cp .env.example .env
-```
-
-Start the API and PostgreSQL:
-
-```bash
 make up
-```
-
-PostgreSQL is available only inside the Docker Compose network at `db:5432`; it is not published to a host port.
-
-Apply migrations:
-
-```bash
 make migrate
-```
-
-Seed roles, users, rules, and sample business objects:
-
-```bash
 make seed
 ```
+
+The API is available at `http://localhost:8000`.
+
+Swagger/OpenAPI docs are available at `http://localhost:8000/docs`.
+
+PostgreSQL is available only inside the Docker Compose network at `db:5432`; it is not published to a host port.
 
 Run tests:
 
@@ -156,11 +145,28 @@ Run tests:
 make test
 ```
 
+Equivalent direct test command:
+
+```bash
+DATABASE_URL=sqlite:///./test.db pytest
+```
+
 ## Seed Credentials
 
 - Admin: `admin@example.com` / `Admin123!`
 - Manager: `manager@example.com` / `Manager123!`
 - User: `user@example.com` / `User123!`
+
+## Manual Verification Checklist
+
+- Login as admin with `admin@example.com` / `Admin123!` -> `200`.
+- Login as regular user with `user@example.com` / `User123!` -> `200`.
+- `GET /auth/me` with a valid bearer token -> `200`.
+- `GET /products` without a token -> `401`.
+- `GET /admin/users` as regular user -> `403`.
+- `GET /admin/users` as admin -> `200`.
+- `POST /auth/logout` -> current token becomes invalid.
+- `DELETE /auth/me` -> user becomes inactive and cannot login again.
 
 ## API Examples
 
@@ -236,7 +242,7 @@ The current implementation intentionally stays focused on the assignment scope. 
 - Pagination metadata, such as total count and next/previous offsets, while preserving list endpoints where needed.
 - Structured logging for request tracing, security events, and operational debugging.
 
-## Assignment Checklist
+## Assignment Mapping
 
 - [x] User registration with profile fields and repeated password validation
 - [x] Login with JWT access token
